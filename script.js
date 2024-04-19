@@ -39,7 +39,55 @@ async function getStudents() {
 }
 
 async function editStudent(id) {
-    // Implement edit functionality
+    const response = await fetch(`/getStudent/${id}`);
+    const student = await response.json();
+
+    const editForm = document.createElement('form');
+    editForm.id = 'editStudentForm';
+
+    const nameInput = document.createElement('input');
+    nameInput.id = 'editName';
+    nameInput.value = student.name;
+
+    const ageInput = document.createElement('input');
+    ageInput.id = 'editAge';
+    ageInput.value = student.age;
+
+    const gradeInput = document.createElement('input');
+    gradeInput.id = 'editGrade';
+    gradeInput.value = student.grade;
+
+    const submitButton = document.createElement('button');
+    submitButton.innerHTML = 'Update';
+    submitButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('editName').value;
+        const age = document.getElementById('editAge').value;
+        const grade = document.getElementById('editGrade').value;
+        const response = await fetch(`/updateStudent/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, age, grade })
+        });
+        const message = await response.text();
+        alert(message);
+        if (response.ok) {
+            getStudents();
+        }
+    });
+
+    editForm.appendChild(nameInput);
+    editForm.appendChild(ageInput);
+    editForm.appendChild(gradeInput);
+    editForm.appendChild(submitButton);
+
+    const editModal = document.createElement('div');
+    editModal.id = 'editModal';
+    editModal.appendChild(editForm);
+
+    document.body.appendChild(editModal);
 }
 
 async function deleteStudent(id) {
